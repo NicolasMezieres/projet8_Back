@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Roles {
+  id             String    @id @default(uuid())
+  nameRole       String
+}
+
+model Users{
+  id             String    @id @default(uuid())
+  firstname      String
+  lastname       String
+  email          String    @unique
+  password       String
+  age            Int
+  isActive       Boolean
+  token          String?
+  role           String
+
+  gdpr           DateTime  @default(now())
+
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  panier Paniers[]
+}
+
+model Paniers {
+  id              String    @id @default(uuid())
+  userId          String
+  name            String
+  totalPrice      Float
+  idCommand       String
+
+  users   Users   @relation(fields: [userId], references: [id])
+  commands Commands?
+  paniersHasProducts PaniersHasProducts[]
+}
+
+model Commands {
+  id              String   @id @default(uuid())
+  idPanier        String   @unique
+  isValidate      Boolean  
+  validationDate  DateTime
+
+  paniers Paniers @relation(fields: [idPanier], references: [id])
+}
+
+model PaniersHasProducts {
+  id              String   @id @default(uuid())
+  idPaniers       String
+  idProducts      String
+
+  paniers Paniers @relation(fields: [idPaniers], references: [id])
+}
+
+model Products {
+  id              String   @id @default(uuid())
+  title           String
+  image           String
+  description     String
+  idCategory      String  
+  quantity        Int 
+  price           Float
+}
+
+model Category {
+  id              String @id @default(uuid())
+  name            String
+}
