@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Cart` ADD COLUMN `isVisible` BOOLEAN NOT NULL DEFAULT true;

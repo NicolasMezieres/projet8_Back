@@ -13,70 +13,82 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Roles {
+model Role {
   id             String    @id @default(uuid())
-  nameRole       String
+  nameRole       String    @unique
+  user User[]
 }
 
-model Users{
+model User{
   id             String    @id @default(uuid())
   firstname      String
   lastname       String
   email          String    @unique
   password       String
   age            Int
-  isActive       Boolean
+  isActive       Boolean   @default(false)
   token          String?
-  role           String
+  idRole         String
 
   gdpr           DateTime  @default(now())
 
   created_at     DateTime  @default(now())
   updated_at     DateTime  @updatedAt
 
-  panier Paniers[]
+  cart Cart[]
+  role Role @relation(fields: [idRole], references: [id])
 }
 
-model Paniers {
+model Cart {
   id              String    @id @default(uuid())
   userId          String
   name            String
-  totalPrice      Float
-  idCommand       String
-
-  users   Users   @relation(fields: [userId], references: [id])
-  commands Commands?
-  paniersHasProducts PaniersHasProducts[]
+  isVisible       Boolean @default(true)
+  user   User   @relation(fields: [userId], references: [id])
+  cartHasProduct CartHasProduct[]
+  command Command?
 }
 
-model Commands {
+model Command {
   id              String   @id @default(uuid())
+  idUser          String   
   idPanier        String   @unique
   isValidate      Boolean  
   validationDate  DateTime
+  container       Json
+  totalPrice      Float
+  created_at    DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
 
-  paniers Paniers @relation(fields: [idPanier], references: [id])
+  cart Cart @relation(fields: [idPanier], references: [id])
 }
 
-model PaniersHasProducts {
+model CartHasProduct {
   id              String   @id @default(uuid())
-  idPaniers       String
-  idProducts      String
+  idCart          String
+  idProduct       String
+  quantity        Int
 
-  paniers Paniers @relation(fields: [idPaniers], references: [id])
+  cart   Cart @relation(fields: [idCart], references: [id])
+  product  Product @relation(fields: [idProduct], references: [id])
 }
 
-model Products {
+model Product {
   id              String   @id @default(uuid())
-  title           String
+  title           String   @unique
   image           String
   description     String
   idCategory      String  
   quantity        Int 
   price           Float
+  isVisible       Boolean  @default(true)
+  cartHasProduct CartHasProduct[]
+  category Category @relation(fields: [idCategory],references: [id])
 }
 
 model Category {
   id              String @id @default(uuid())
-  name            String
+  name            String @unique
+  image           String 
+  product Product[]
 }

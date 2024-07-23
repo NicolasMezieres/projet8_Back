@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE `Users` ADD CONSTRAINT `Users_role_fkey` FOREIGN KEY (`role`) REFERENCES `Roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
