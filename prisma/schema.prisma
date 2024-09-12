@@ -39,7 +39,7 @@ model User{
   role Role @relation(fields: [idRole], references: [id])
 }
 
-model Cart {
+model Cart {  
   id              String    @id @default(uuid())
   userId          String
   name            String

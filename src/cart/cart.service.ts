@@ -10,7 +10,7 @@ import { User } from '@prisma/client';
 @Injectable()
 export class CartService {
   constructor(private prisma: PrismaService) {}
-
+//test 
   async getAllCart(user: User) {
     const allCart = await this.prisma.cart.findMany({
       where: {
